@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      # TODO: once you're ready to connect the databases,
+      # point these at the service names below (mongo, redis)
+      - MONGO_URI=mongodb://mongo:27017/myapp
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./src:/app/src   # hot-reload for local dev
+
+  # -------------------------------------------------------
+  # TODO: Connect MongoDB
+  # The app service above already points MONGO_URI here.
+  # Uncomment db.js calls in server.js to activate.
+  # -------------------------------------------------------
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # -------------------------------------------------------
+  # TODO: Connect Redis
+  # The app service above already points REDIS_HOST here.
+  # Uncomment redis.js calls in server.js to activate.
+  # -------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongo_data:
